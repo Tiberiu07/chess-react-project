@@ -1,0 +1,32 @@
+body {
+  background-color: #312e2b;
+  background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+}
+
+.chessBoard {
+  width: 400px;
+  height: 400px;
+  background-color: white;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.chessSquare {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.chessSquare img {
+  width: 35px;
+  height: auto;
+}
+
+.chessSquare__black {
+  background-color: #779556;
+}
+
+.chessBoard__white {
+  background-color: #ebecd0;
+}
