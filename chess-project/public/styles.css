@@ -63,3 +63,13 @@ body {
 .chessBoard__white {
   background-color: #ebecd0;
 }
+
+.app-content__middle-part {
+  display: flex;
+  justify-content: center;
+}
+
+.app-content__middle-part button {
+  margin: 1rem;
+  margin-top: 2.5rem;
+}

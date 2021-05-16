@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ChessTable from "./ChessTable";
 import PlayerDashboard from "./PlayerDashboard";
+import Button from "@material-ui/core/Button";
 
 class Piece {
   pieceName;
@@ -84,14 +85,31 @@ function App() {
     }
   }
 
+  function clickedFirst() {
+    console.log("Clicked button");
+  }
+
   return (
-    <div className="app-content__top-part">
-      <PlayerDashboard playerLetter="A" playerColor="w" />
-      <div onClick={randomInitialization}>
-        <ChessTable pieces={pieces} />
+    <div className="app-content_wrapper">
+      <div className="app-content__top-part">
+        <PlayerDashboard playerLetter="A" playerColor="w" />
+        <div onClick={randomInitialization}>
+          <ChessTable pieces={pieces} />
+        </div>
+        <PlayerDashboard playerLetter="B" playerColor="b" />
+        {/* <button onClick={showPieces}>Show Pieces</button> */}
       </div>
-      <PlayerDashboard playerLetter="B" playerColor="b" />
-      {/* <button onClick={showPieces}>Show Pieces</button> */}
+      <div className="app-content__middle-part">
+        <Button variant="contained" color="primary" onClick={clickedFirst}>
+          New Simulation
+        </Button>
+        <Button variant="contained" color="primary" onClick={clickedFirst}>
+          Start
+        </Button>
+        <Button variant="contained" color="primary" onClick={clickedFirst}>
+          Pause
+        </Button>
+      </div>
     </div>
   );
 }
