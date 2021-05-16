@@ -3,12 +3,45 @@ body {
   background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
 }
 
+.app-content__top-part {
+  margin-top: 10vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.player-dashboard__wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-dashboard__wrapper h1 {
+  font-size: 3rem;
+  -webkit-text-stroke: 2.5px black;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.player-dashboard__wrapper img {
+  margin: 0.5rem;
+  width: 50px;
+  height: auto;
+}
+
+.player_dashboard__crossed-image {
+  color: red;
+}
+
 .chessBoard {
   width: 400px;
   height: 400px;
   background-color: white;
   display: flex;
   flex-wrap: wrap;
+  border: 3px solid black;
 }
 
 .chessSquare {

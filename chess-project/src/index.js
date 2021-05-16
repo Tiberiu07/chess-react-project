@@ -9,9 +9,7 @@ ReactDOM.render(<App />, document.getElementById("root"));
 //2. ✔ Research the 3 pieces movement rules
 //3. ✔ Add the Chess Table Component and render a mockup in the app
 //3. ✔ Implement the Chess Table Component (without pieces yet)
-//3.1 Add the pieces to the Table Component
-//3.2 Add the move piece functionality
-//3.3 Decide whether to keep the ID or not to determine a chess table position
+//3.1 ✔ Add the pieces to the Table Component
 //4. Implement the PlayerDashboard component
 //5. Implement the ButtosArea component
 //6. Implement the GameHistory component
