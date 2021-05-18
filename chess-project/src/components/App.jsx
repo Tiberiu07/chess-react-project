@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ChessTable from "./ChessTable";
 import PlayerDashboard from "./PlayerDashboard";
 import Button from "@material-ui/core/Button";
+import StateHistory from "./StateHistory";
 
 class Piece {
   pieceName;
@@ -20,6 +21,7 @@ function App() {
   const verticalAxis = ["1", "2", "3", "4", "5", "6", "7", "8"];
   const horizontalAxis = ["h", "g", "f", "e", "d", "c", "b", "a"];
   const [pieces, SetPieces] = useState([]);
+  const [isStateUpdated, SetIsStateUpdated] = useState(true);
 
   async function randomInitialization() {
     const piecesNames = [
@@ -72,6 +74,8 @@ function App() {
         continue;
       }
     }
+    //Set IsStateUpdated to false for StateHistory rendering
+    SetIsStateUpdated(false);
   }
 
   //Debugging purposes. To be eliminated in the final version.
@@ -88,6 +92,21 @@ function App() {
   function clickedFirst() {
     console.log("Clicked button");
   }
+
+  // function makeMoveTest() {
+  //   //Change bishop b position to h1
+  //   SetPieces((previous) => {
+  //     previous.forEach(function (piece) {
+  //       if (piece.pieceName === "bishop_b") {
+  //         piece.verticalPosition = "6";
+  //         piece.horizontalPosition = "b";
+  //       }
+  //     });
+  //     return previous;
+  //   });
+  //   //Mem the move in the state history
+  //   SetIsStateUpdated(false);
+  // }
 
   return (
     <div className="app-content_wrapper">
@@ -107,8 +126,15 @@ function App() {
           Start
         </Button>
         <Button variant="contained" color="primary" onClick={clickedFirst}>
-          Pause
+          Demo
         </Button>
+      </div>
+      <div className="app-content__table-part">
+        <StateHistory
+          pieces={pieces}
+          piecesUpdated={isStateUpdated}
+          piecesSetStateUpdated={SetIsStateUpdated}
+        />
       </div>
     </div>
   );
