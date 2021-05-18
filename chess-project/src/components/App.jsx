@@ -22,8 +22,20 @@ function App() {
   const horizontalAxis = ["h", "g", "f", "e", "d", "c", "b", "a"];
   const [pieces, SetPieces] = useState([]);
   const [isStateUpdated, SetIsStateUpdated] = useState(true);
+  const [newSimulation, SetNewSimulation] = useState(false);
 
   async function randomInitialization() {
+    //Set Pieces to null
+    //Execute the functions in a secvential manner
+    if (pieces.length !== 0) {
+      //If the pieces array is not null, make it so
+      await SetPieces(function (previous) {
+        previous = [];
+        return previous;
+      });
+      //Tell the StateHistory to clear itself
+      SetNewSimulation(true);
+    }
     const piecesNames = [
       "bishop_b",
       "bishop_w",
@@ -93,6 +105,260 @@ function App() {
     console.log("Clicked button");
   }
 
+  function pieceMoveSimulation(pieceName) {
+    pieceName = "knight_b";
+    //Parse the pieceName parameter to get the piece type and piece color
+    const pieceNameSplit = pieceName.split("_");
+    const pieceType = pieceNameSplit[0];
+    const pieceColor = pieceNameSplit[1];
+    //Get the current position
+    //Get the current position
+    var vertPosition = null;
+    var horPosition = null;
+    pieces.forEach(function (piece) {
+      if (piece.pieceName === pieceName) {
+        vertPosition = piece.verticalPosition;
+        horPosition = piece.horizontalPosition;
+      }
+    });
+    //Construct an array of permitted positions for the random selection
+    //For this, 2 iterators will pe used to iterate through every possible permitted position
+    //Only within the bounds
+    var vertIterator = vertPosition;
+    var horIterator = horPosition;
+    var permitedPositions = [];
+    //Select a random Position for the piece, according to its type`s rules
+    switch (pieceType) {
+      case "bishop":
+        //A bishop can move only within diagonals
+        //First subcase, the iterator will go left and down until reached board bounds
+        while (
+          String.fromCharCode(vertIterator.charCodeAt(0) + 1) <= "8" &&
+          String.fromCharCode(horIterator.charCodeAt(0) + 1) <= "h"
+        ) {
+          vertIterator = String.fromCharCode(vertIterator.charCodeAt(0) + 1);
+          horIterator = String.fromCharCode(horIterator.charCodeAt(0) + 1);
+          permitedPositions.push(horIterator + vertIterator);
+        }
+        //Restore iterator values to the original positions
+        vertIterator = vertPosition;
+        horIterator = horPosition;
+        //Second subcase, the iterator will go left and up until reached board bounds
+        while (
+          String.fromCharCode(vertIterator.charCodeAt(0) - 1) >= "1" &&
+          String.fromCharCode(horIterator.charCodeAt(0) + 1) <= "h"
+        ) {
+          vertIterator = String.fromCharCode(vertIterator.charCodeAt(0) - 1);
+          horIterator = String.fromCharCode(horIterator.charCodeAt(0) + 1);
+          permitedPositions.push(horIterator + vertIterator);
+        }
+        //Restore iterator values to the original positions
+        vertIterator = vertPosition;
+        horIterator = horPosition;
+        //Third subcase, the iterator will go right and down until reached board bounds
+        while (
+          String.fromCharCode(vertIterator.charCodeAt(0) + 1) <= "8" &&
+          String.fromCharCode(horIterator.charCodeAt(0) - 1) >= "a"
+        ) {
+          vertIterator = String.fromCharCode(vertIterator.charCodeAt(0) + 1);
+          horIterator = String.fromCharCode(horIterator.charCodeAt(0) - 1);
+          permitedPositions.push(horIterator + vertIterator);
+        }
+        //Restore iterator values to the original positions
+        vertIterator = vertPosition;
+        horIterator = horPosition;
+        //Fourth subcase, the iterator will go right and up until reached board bounds
+        while (
+          String.fromCharCode(vertIterator.charCodeAt(0) - 1) >= "1" &&
+          String.fromCharCode(horIterator.charCodeAt(0) - 1) >= "a"
+        ) {
+          vertIterator = String.fromCharCode(vertIterator.charCodeAt(0) - 1);
+          horIterator = String.fromCharCode(horIterator.charCodeAt(0) - 1);
+          permitedPositions.push(horIterator + vertIterator);
+        }
+        //Restore iterator values to the original positions
+        vertIterator = vertPosition;
+        horIterator = horPosition;
+        console.log(permitedPositions);
+        break;
+
+      case "queen":
+        //Diagonal moves
+        //First subcase, the iterator will go left and down until reached board bounds
+        while (
+          String.fromCharCode(vertIterator.charCodeAt(0) + 1) <= "8" &&
+          String.fromCharCode(horIterator.charCodeAt(0) + 1) <= "h"
+        ) {
+          vertIterator = String.fromCharCode(vertIterator.charCodeAt(0) + 1);
+          horIterator = String.fromCharCode(horIterator.charCodeAt(0) + 1);
+          permitedPositions.push(horIterator + vertIterator);
+        }
+        //Restore iterator values to the original positions
+        vertIterator = vertPosition;
+        horIterator = horPosition;
+        //Second subcase, the iterator will go left and up until reached board bounds
+        while (
+          String.fromCharCode(vertIterator.charCodeAt(0) - 1) >= "1" &&
+          String.fromCharCode(horIterator.charCodeAt(0) + 1) <= "h"
+        ) {
+          vertIterator = String.fromCharCode(vertIterator.charCodeAt(0) - 1);
+          horIterator = String.fromCharCode(horIterator.charCodeAt(0) + 1);
+          permitedPositions.push(horIterator + vertIterator);
+        }
+        //Restore iterator values to the original positions
+        vertIterator = vertPosition;
+        horIterator = horPosition;
+        //Third subcase, the iterator will go right and down until reached board bounds
+        while (
+          String.fromCharCode(vertIterator.charCodeAt(0) + 1) <= "8" &&
+          String.fromCharCode(horIterator.charCodeAt(0) - 1) >= "a"
+        ) {
+          vertIterator = String.fromCharCode(vertIterator.charCodeAt(0) + 1);
+          horIterator = String.fromCharCode(horIterator.charCodeAt(0) - 1);
+          permitedPositions.push(horIterator + vertIterator);
+        }
+        //Restore iterator values to the original positions
+        vertIterator = vertPosition;
+        horIterator = horPosition;
+        //Fourth subcase, the iterator will go right and up until reached board bounds
+        while (
+          String.fromCharCode(vertIterator.charCodeAt(0) - 1) >= "1" &&
+          String.fromCharCode(horIterator.charCodeAt(0) - 1) >= "a"
+        ) {
+          vertIterator = String.fromCharCode(vertIterator.charCodeAt(0) - 1);
+          horIterator = String.fromCharCode(horIterator.charCodeAt(0) - 1);
+          permitedPositions.push(horIterator + vertIterator);
+        }
+        //Restore iterator values to the original positions
+        vertIterator = vertPosition;
+        horIterator = horPosition;
+
+        //Besides diagonal, also horizontal and vertical
+        //First subcase, the iterator will go straight up until it reached board bounds
+        while (String.fromCharCode(vertIterator.charCodeAt(0) - 1) >= "1") {
+          vertIterator = String.fromCharCode(vertIterator.charCodeAt(0) - 1);
+          permitedPositions.push(horIterator + vertIterator);
+        }
+        //Restore iterator values to the original positions
+        vertIterator = vertPosition;
+        horIterator = horPosition;
+        //Second subcase, the iterator will go straight down until it reached board bounds
+        while (String.fromCharCode(vertIterator.charCodeAt(0) + 1) <= "8") {
+          vertIterator = String.fromCharCode(vertIterator.charCodeAt(0) + 1);
+          permitedPositions.push(horIterator + vertIterator);
+        }
+        //Restore iterator values to the original positions
+        vertIterator = vertPosition;
+        horIterator = horPosition;
+        //Third subcase, the iterator will go right until reached board bounds
+        while (String.fromCharCode(horIterator.charCodeAt(0) - 1) >= "a") {
+          horIterator = String.fromCharCode(horIterator.charCodeAt(0) - 1);
+          permitedPositions.push(horIterator + vertIterator);
+        }
+        //Restore iterator values to the original positions
+        vertIterator = vertPosition;
+        horIterator = horPosition;
+
+        //Fourth subcase, the iterator will go left until reached board bounds
+        while (String.fromCharCode(horIterator.charCodeAt(0) + 1) <= "h") {
+          horIterator = String.fromCharCode(horIterator.charCodeAt(0) + 1);
+          permitedPositions.push(horIterator + vertIterator);
+        }
+        //Restore iterator values to the original positions
+        vertIterator = vertPosition;
+        horIterator = horPosition;
+        console.log(permitedPositions);
+        break;
+
+      case "knight":
+        //Check the the knight`s 8 permitted positions
+        //One Down, Two Left
+        if (
+          String.fromCharCode(vertIterator.charCodeAt(0) - 1) >= "1" &&
+          String.fromCharCode(horIterator.charCodeAt(0) - 2) >= "a"
+        ) {
+          permitedPositions.push(
+            String.fromCharCode(horIterator.charCodeAt(0) - 2) +
+              String.fromCharCode(vertIterator.charCodeAt(0) - 1)
+          );
+        }
+        //Two Down, One Left
+        if (
+          String.fromCharCode(vertIterator.charCodeAt(0) - 2) >= "1" &&
+          String.fromCharCode(horIterator.charCodeAt(0) - 1) >= "a"
+        ) {
+          permitedPositions.push(
+            String.fromCharCode(horIterator.charCodeAt(0) - 1) +
+              String.fromCharCode(vertIterator.charCodeAt(0) - 2)
+          );
+        }
+        //Two Up, One Left
+        if (
+          String.fromCharCode(vertIterator.charCodeAt(0) + 2) <= "8" &&
+          String.fromCharCode(horIterator.charCodeAt(0) - 1) >= "a"
+        ) {
+          permitedPositions.push(
+            String.fromCharCode(horIterator.charCodeAt(0) - 1) +
+              String.fromCharCode(vertIterator.charCodeAt(0) + 2)
+          );
+        }
+        //Two Left, One Up
+        if (
+          String.fromCharCode(vertIterator.charCodeAt(0) + 1) <= "8" &&
+          String.fromCharCode(horIterator.charCodeAt(0) - 2) >= "a"
+        ) {
+          permitedPositions.push(
+            String.fromCharCode(horIterator.charCodeAt(0) - 2) +
+              String.fromCharCode(vertIterator.charCodeAt(0) + 1)
+          );
+        }
+        //Two Right, One up
+        if (
+          String.fromCharCode(vertIterator.charCodeAt(0) + 1) <= "8" &&
+          String.fromCharCode(horIterator.charCodeAt(0) + 2) <= "h"
+        ) {
+          permitedPositions.push(
+            String.fromCharCode(horIterator.charCodeAt(0) + 2) +
+              String.fromCharCode(vertIterator.charCodeAt(0) + 1)
+          );
+        }
+        //Two Up, One Right
+        if (
+          String.fromCharCode(vertIterator.charCodeAt(0) + 2) <= "8" &&
+          String.fromCharCode(horIterator.charCodeAt(0) + 1) <= "h"
+        ) {
+          permitedPositions.push(
+            String.fromCharCode(horIterator.charCodeAt(0) + 1) +
+              String.fromCharCode(vertIterator.charCodeAt(0) + 2)
+          );
+        }
+        //Two Right, One Down
+        if (
+          String.fromCharCode(vertIterator.charCodeAt(0) - 1) >= "1" &&
+          String.fromCharCode(horIterator.charCodeAt(0) + 2) <= "h"
+        ) {
+          permitedPositions.push(
+            String.fromCharCode(horIterator.charCodeAt(0) + 2) +
+              String.fromCharCode(vertIterator.charCodeAt(0) - 1)
+          );
+        }
+        //Two Down, One Right
+        if (
+          String.fromCharCode(vertIterator.charCodeAt(0) - 2) >= "1" &&
+          String.fromCharCode(horIterator.charCodeAt(0) + 1) <= "h"
+        ) {
+          permitedPositions.push(
+            String.fromCharCode(horIterator.charCodeAt(0) + 1) +
+              String.fromCharCode(vertIterator.charCodeAt(0) - 2)
+          );
+        }
+        console.log(permitedPositions);
+        break;
+      default:
+        break;
+    }
+  }
+
   // function makeMoveTest() {
   //   //Change bishop b position to h1
   //   SetPieces((previous) => {
@@ -112,18 +378,26 @@ function App() {
     <div className="app-content_wrapper">
       <div className="app-content__top-part">
         <PlayerDashboard playerLetter="A" playerColor="w" />
-        <div onClick={randomInitialization}>
+        <div>
           <ChessTable pieces={pieces} />
         </div>
         <PlayerDashboard playerLetter="B" playerColor="b" />
         {/* <button onClick={showPieces}>Show Pieces</button> */}
       </div>
       <div className="app-content__middle-part">
-        <Button variant="contained" color="primary" onClick={clickedFirst}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={randomInitialization}
+        >
           New Simulation
         </Button>
-        <Button variant="contained" color="primary" onClick={clickedFirst}>
-          Start
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={pieceMoveSimulation}
+        >
+          makeMoveDemo
         </Button>
         <Button variant="contained" color="primary" onClick={clickedFirst}>
           Demo
@@ -134,6 +408,8 @@ function App() {
           pieces={pieces}
           piecesUpdated={isStateUpdated}
           piecesSetStateUpdated={SetIsStateUpdated}
+          newSimulation={newSimulation}
+          SetNewSimulation={SetNewSimulation}
         />
       </div>
     </div>

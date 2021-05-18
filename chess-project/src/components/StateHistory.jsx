@@ -68,6 +68,13 @@ export default function StateHistory(props) {
   };
 
   if (props.piecesUpdated === false) {
+    //Check if new simulation was called
+    if (props.newSimulation === true) {
+      //Delete the old History
+      rows = [];
+      //Set the newSimulation hook set to false
+      props.SetNewSimulation(false);
+    }
     //If the state was updated, but it does not coincide with the table
     //Update the table with pieces data
     var piecesPositions = [];
