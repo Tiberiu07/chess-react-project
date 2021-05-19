@@ -8,6 +8,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
+import shortid from "shortid";
 
 const columns = [
   { id: "White_Bishop", label: "White_Bishop", minWidth: 100, align: "center" },
@@ -27,6 +28,12 @@ function createData(
   White_Queen,
   Black_Queen
 ) {
+  White_Bishop = White_Bishop === "z9" ? "X" : White_Bishop;
+  Black_Bishop = Black_Bishop === "z9" ? "X" : Black_Bishop;
+  White_Knight = White_Knight === "z9" ? "X" : White_Knight;
+  Black_Knight = Black_Knight === "z9" ? "X" : Black_Knight;
+  White_Queen = White_Queen === "z9" ? "X" : White_Queen;
+  Black_Queen = Black_Queen === "z9" ? "X" : Black_Queen;
   return {
     White_Bishop,
     Black_Bishop,
@@ -83,7 +90,6 @@ export default function StateHistory(props) {
         piece.horizontalPosition + piece.verticalPosition;
     });
     rows = [
-      ...rows,
       createData(
         piecesPositions["bishop_w"],
         piecesPositions["bishop_b"],
@@ -92,6 +98,7 @@ export default function StateHistory(props) {
         piecesPositions["queen_w"],
         piecesPositions["queen_b"]
       ),
+      ...rows,
     ];
     props.piecesSetStateUpdated(true);
   }
@@ -118,7 +125,12 @@ export default function StateHistory(props) {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    tabIndex={-1}
+                    key={shortid.generate()}
+                  >
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (

@@ -23,8 +23,13 @@ function App() {
   const [pieces, SetPieces] = useState([]);
   const [isStateUpdated, SetIsStateUpdated] = useState(true);
   const [newSimulation, SetNewSimulation] = useState(false);
+  const [isGameOver, SetGameOver] = useState(false);
+  const [isGamePaused, SetGamePaused] = useState(false);
 
   async function randomInitialization() {
+    if (isGameOver) {
+      SetGameOver(false);
+    }
     //Set Pieces to null
     //Execute the functions in a secvential manner
     if (pieces.length !== 0) {
@@ -106,7 +111,6 @@ function App() {
   }
 
   async function pieceMoveSimulation(pieceName) {
-    pieceName = "knight_b";
     //Parse the pieceName parameter to get the piece type and piece color
     const pieceNameSplit = pieceName.split("_");
     const pieceType = pieceNameSplit[0];
@@ -360,6 +364,8 @@ function App() {
     var min = 0;
     var max = permitedPositions.length - 1;
     let validMove;
+
+    //Warnings bypass functions (no variable changes in loops / unsafe)
     var changeValidMove = function () {
       validMove = !validMove;
     };
@@ -415,30 +421,57 @@ function App() {
     } while (!validMove);
   }
 
-  // function makeMoveTest() {
-  //   //Change bishop b position to h1
-  //   SetPieces((previous) => {
-  //     previous.forEach(function (piece) {
-  //       if (piece.pieceName === "bishop_b") {
-  //         piece.verticalPosition = "6";
-  //         piece.horizontalPosition = "b";
-  //       }
-  //     });
-  //     return previous;
-  //   });
-  //   //Mem the move in the state history
-  //   SetIsStateUpdated(false);
-  // }
+  async function gameSimulation() {
+    let turn = "w";
+    var getTurn = function () {
+      return turn;
+    };
+    //Execute the moves within a set time interval, so that we can see each move
+
+    var timeOut = setInterval(async function () {
+      let availablePieces = [];
+      pieces.forEach((piece) => {
+        //If piece not eliminated
+        if (
+          piece.pieceName.split("_")[1] === getTurn() &&
+          piece.horizontalPosition !== "z"
+        ) {
+          availablePieces.push(piece.pieceName);
+        }
+      });
+      if (availablePieces.length === 0) {
+        //Game Over
+        //Change GameOver State
+        console.log("no more available pieces");
+        SetGameOver(true);
+        clearInterval(timeOut);
+      } else {
+        //Pick a random piece
+        var randomIndex = Math.floor(Math.random() * availablePieces.length);
+        var randomPiece = availablePieces[randomIndex];
+        await pieceMoveSimulation(randomPiece);
+
+        turn = turn === "w" ? "b" : "w";
+      }
+    }, 5);
+  }
+
+  function pauseGame() {
+    SetGamePaused(true);
+  }
 
   return (
     <div className="app-content_wrapper">
       <div className="app-content__top-part">
-        <PlayerDashboard playerLetter="A" playerColor="w" />
+        <PlayerDashboard pieces={pieces} playerLetter="A" playerColor="w" />
         <div>
           <ChessTable pieces={pieces} />
         </div>
-        <PlayerDashboard playerLetter="B" playerColor="b" />
+        <PlayerDashboard pieces={pieces} playerLetter="B" playerColor="b" />
         {/* <button onClick={showPieces}>Show Pieces</button> */}
+      </div>
+      <div className="app-content__game-over">
+        <h1 style={{ display: isGameOver ? "block" : "none" }}>Game Over</h1>
       </div>
       <div className="app-content__middle-part">
         <Button
@@ -448,15 +481,11 @@ function App() {
         >
           New Simulation
         </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={pieceMoveSimulation}
-        >
-          makeMoveDemo
+        <Button variant="contained" color="primary" onClick={pauseGame}>
+          Pause
         </Button>
-        <Button variant="contained" color="primary" onClick={clickedFirst}>
-          Demo
+        <Button variant="contained" color="primary" onClick={gameSimulation}>
+          GameSimulationDemo
         </Button>
       </div>
       <div className="app-content__table-part">

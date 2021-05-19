@@ -1,15 +1,28 @@
+import { Switch } from "@material-ui/core";
 import React from "react";
+import shortid from "shortid";
 
 function PlayerDashboard(props) {
-  const assets = ["bishop", "knight", "queen"];
   return (
     <div className="player-dashboard__wrapper">
       <h1>Player {props.playerLetter}</h1>
-      <div>
-        {assets.map(function (element) {
-          var imgSource =
-            "assets/images/" + element + "_" + props.playerColor + ".png";
-          return <img key={imgSource} src={imgSource} alt="board piece" />;
+      <div className="images__wrapper">
+        {props.pieces.map(function (piece) {
+          //If color not okay, skip piece
+          if (piece.pieceName.split("_")[1] !== props.playerColor) {
+            //Skip this element
+          } else {
+            var pieceName = piece.pieceName.split("_")[0];
+            var imgSource =
+              "assets/images/" + pieceName + "_" + props.playerColor + ".png";
+            //Check if element defined or not
+            if (piece.horizontalPosition === "z") {
+              imgSource = "assets/images/close.png";
+            }
+            return (
+              <img key={shortid.generate()} src={imgSource} alt="board piece" />
+            );
+          }
         })}
       </div>
     </div>
