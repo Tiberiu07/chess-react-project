@@ -105,7 +105,7 @@ function App() {
     console.log("Clicked button");
   }
 
-  function pieceMoveSimulation(pieceName) {
+  async function pieceMoveSimulation(pieceName) {
     pieceName = "knight_b";
     //Parse the pieceName parameter to get the piece type and piece color
     const pieceNameSplit = pieceName.split("_");
@@ -179,7 +179,7 @@ function App() {
         //Restore iterator values to the original positions
         vertIterator = vertPosition;
         horIterator = horPosition;
-        console.log(permitedPositions);
+
         break;
 
       case "queen":
@@ -267,7 +267,7 @@ function App() {
         //Restore iterator values to the original positions
         vertIterator = vertPosition;
         horIterator = horPosition;
-        console.log(permitedPositions);
+
         break;
 
       case "knight":
@@ -352,11 +352,67 @@ function App() {
               String.fromCharCode(vertIterator.charCodeAt(0) - 2)
           );
         }
-        console.log(permitedPositions);
         break;
       default:
         break;
     }
+
+    var min = 0;
+    var max = permitedPositions.length - 1;
+    let validMove;
+    var changeValidMove = function () {
+      validMove = !validMove;
+    };
+    var getRandomPosition = function () {
+      return randomPosition;
+    };
+    var getValidMove = function () {
+      return validMove;
+    };
+
+    do {
+      //Now that we have a permitted positions array, pick a random one
+      var randomIndex = Math.floor(Math.random() * (max - min + 1)) + min;
+      var randomPosition = permitedPositions[randomIndex];
+      validMove = true; //Assume that the picked position is valid
+
+      await SetPieces(function (previous) {
+        //Check if a piece already on this position
+        previous.forEach(function (piece) {
+          if (
+            piece.horizontalPosition + piece.verticalPosition ===
+            getRandomPosition()
+          ) {
+            //Check if same color
+            if (piece.pieceName.split("_")[1] === pieceColor) {
+              //Same color, so invalid move
+              //Pick a new randomPosition and repeat the process
+              changeValidMove();
+            } else {
+              //Different color
+              //Eliminate the piece / Set its position parameters to z9
+              piece.horizontalPosition = "z";
+              piece.verticalPosition = "9";
+            }
+          }
+        });
+        return previous;
+      });
+      //If validMove, update the piece position
+      if (getValidMove()) {
+        await SetPieces(function (previous) {
+          previous.forEach((piece) => {
+            if (piece.pieceName === pieceName) {
+              //Update the piece coordinates
+              piece.horizontalPosition = getRandomPosition().split("")[0];
+              piece.verticalPosition = getRandomPosition().split("")[1];
+            }
+          });
+          SetIsStateUpdated(false);
+          return previous;
+        });
+      }
+    } while (!validMove);
   }
 
   // function makeMoveTest() {
