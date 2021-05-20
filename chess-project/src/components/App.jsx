@@ -25,6 +25,7 @@ function App() {
   const [newSimulation, SetNewSimulation] = useState(false);
   const [isGameOver, SetGameOver] = useState(false);
   const [isGamePaused, SetGamePaused] = useState(false);
+  const [timeOut, setTimeOut] = useState(); //Keep track of game loop setInterval ID, so that when we pause we can clearInterval it
 
   async function randomInitialization() {
     if (isGameOver) {
@@ -40,6 +41,7 @@ function App() {
       });
       //Tell the StateHistory to clear itself
       SetNewSimulation(true);
+      SetGamePaused(false);
     }
     const piecesNames = [
       "bishop_b",
@@ -93,21 +95,6 @@ function App() {
     }
     //Set IsStateUpdated to false for StateHistory rendering
     SetIsStateUpdated(false);
-  }
-
-  //Debugging purposes. To be eliminated in the final version.
-  function showPieces() {
-    if (pieces.length === 0) {
-      console.log("Empty Array");
-    } else {
-      pieces.forEach(function (element) {
-        console.log(element);
-      });
-    }
-  }
-
-  function clickedFirst() {
-    console.log("Clicked button");
   }
 
   async function pieceMoveSimulation(pieceName) {
@@ -422,42 +409,50 @@ function App() {
   }
 
   async function gameSimulation() {
-    let turn = "w";
-    var getTurn = function () {
-      return turn;
-    };
-    //Execute the moves within a set time interval, so that we can see each move
+    if (!isGamePaused) {
+      let turn = "w";
+      var getTurn = function () {
+        return turn;
+      };
+      //Execute the moves within a set time interval, so that we can see each move
 
-    var timeOut = setInterval(async function () {
-      let availablePieces = [];
-      pieces.forEach((piece) => {
-        //If piece not eliminated
-        if (
-          piece.pieceName.split("_")[1] === getTurn() &&
-          piece.horizontalPosition !== "z"
-        ) {
-          availablePieces.push(piece.pieceName);
-        }
+      setTimeOut((previous) => {
+        var newInterval = setInterval(async function () {
+          let availablePieces = [];
+          pieces.forEach((piece) => {
+            //If piece not eliminated
+            if (
+              piece.pieceName.split("_")[1] === getTurn() &&
+              piece.horizontalPosition !== "z"
+            ) {
+              availablePieces.push(piece.pieceName);
+            }
+          });
+          if (availablePieces.length === 0) {
+            //Game Over
+            //Change GameOver State
+            SetGameOver(true);
+
+            clearInterval(newInterval);
+          } else {
+            //Pick a random piece
+            var randomIndex = Math.floor(
+              Math.random() * availablePieces.length
+            );
+            var randomPiece = availablePieces[randomIndex];
+            await pieceMoveSimulation(randomPiece);
+
+            turn = turn === "w" ? "b" : "w";
+          }
+        }, 5);
+        return newInterval;
       });
-      if (availablePieces.length === 0) {
-        //Game Over
-        //Change GameOver State
-        console.log("no more available pieces");
-        SetGameOver(true);
-        clearInterval(timeOut);
-      } else {
-        //Pick a random piece
-        var randomIndex = Math.floor(Math.random() * availablePieces.length);
-        var randomPiece = availablePieces[randomIndex];
-        await pieceMoveSimulation(randomPiece);
 
-        turn = turn === "w" ? "b" : "w";
-      }
-    }, 5);
-  }
-
-  function pauseGame() {
-    SetGamePaused(true);
+      SetGamePaused(true);
+    } else {
+      clearInterval(timeOut);
+      SetGamePaused(false);
+    }
   }
 
   return (
@@ -481,11 +476,11 @@ function App() {
         >
           New Simulation
         </Button>
-        <Button variant="contained" color="primary" onClick={pauseGame}>
-          Pause
+        <Button variant="contained" color="primary" onClick={gameSimulation}>
+          Start
         </Button>
         <Button variant="contained" color="primary" onClick={gameSimulation}>
-          GameSimulationDemo
+          Pause
         </Button>
       </div>
       <div className="app-content__table-part">
