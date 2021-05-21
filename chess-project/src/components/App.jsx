@@ -97,6 +97,29 @@ function App() {
     SetIsStateUpdated(false);
   }
 
+  async function changestate(piecesPositions) {
+    await SetPieces(function (previous) {
+      //Array iterator
+      var i = 0;
+      //Check if a piece already on this position
+      previous.forEach(function (piece) {
+        var FullPosition = piecesPositions[i];
+        if (FullPosition === "X") {
+          piece.horizontalPosition = "z";
+          piece.verticalPosition = "9";
+        } else {
+          var horizontalPosition = FullPosition.split("")[0];
+          var verticalPosition = FullPosition.split("")[1];
+          piece.horizontalPosition = horizontalPosition;
+          piece.verticalPosition = verticalPosition;
+        }
+        i++;
+      });
+      SetIsStateUpdated(false);
+      return previous;
+    });
+  }
+
   async function pieceMoveSimulation(pieceName) {
     //Parse the pieceName parameter to get the piece type and piece color
     const pieceNameSplit = pieceName.split("_");
@@ -490,6 +513,7 @@ function App() {
           piecesSetStateUpdated={SetIsStateUpdated}
           newSimulation={newSimulation}
           SetNewSimulation={SetNewSimulation}
+          onRowClick={changestate}
         />
       </div>
     </div>

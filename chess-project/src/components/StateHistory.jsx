@@ -61,6 +61,24 @@ const useStyles = makeStyles({
 });
 
 export default function StateHistory(props) {
+  function handleRowClick(event) {
+    //Get the row positions for each piece
+    var piecesPositions = [];
+    var piecesObjects = event.target.parentElement.children;
+    for (var pieceObject of piecesObjects) {
+      piecesPositions.push(pieceObject.innerText);
+    }
+    //Swap the positions so that piecesPositions array will match pieces state array, regarding piece order
+    //Swap every 2 elements
+    for (var i = 0; i < piecesPositions.length; i = i + 2) {
+      [piecesPositions[i], piecesPositions[i + 1]] = [
+        piecesPositions[i + 1],
+        piecesPositions[i],
+      ];
+    }
+    props.onRowClick(piecesPositions);
+  }
+
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -135,9 +153,7 @@ export default function StateHistory(props) {
                       const value = row[column.id];
                       return (
                         <TableCell
-                          onClick={(event) => {
-                            console.log(event.target.parentElement.children);
-                          }}
+                          onClick={handleRowClick}
                           key={column.id}
                           align={column.align}
                         >

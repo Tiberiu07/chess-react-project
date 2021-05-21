@@ -24,5 +24,5 @@ ReactDOM.render(<App />, document.getElementById("root"));
 //7.5 ✔Material UI stack content up, not down + mark eliminated pieces
 //7.6 Solve 2 Bishops bug
 //7.7 ✔Implement pause functionality
-//7.7.1 Implement the resume functionality
-//7.8 Implement the get back to a certain state
+//7.7.1 ✔Implement the resume functionality
+//7.8✔ Implement the get back to a certain state when StateHistory Click
